@@ -1,8 +1,3 @@
-# Simple example showing how the kubernetes POD operator can be used with airflow.
-# This example creates a DAG with four tasks: a dummy one, and  three more tasks
-# running in three separate PODs in a local kubernetes cluster.
-
-# import the necessary libraries
 from airflow import DAG
 from datetime import datetime, timedelta
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
@@ -15,52 +10,42 @@ default_args = {
     'email': ['airflow@example.com'],
     'email_on_failure': False,
     'email_on_retry': False,
-    'retries': 0,
-    'retry_delay': timedelta(minutes=3)
-    }
+    'retries': 1,
+    'retry_delay': timedelta(minutes=5)
+}
 
-dag = DAG('k8s-sample', default_args=default_args, schedule_interval=timedelta(minutes=5))
-
-first_task = DummyOperator(task_id='first-task', dag=dag)
-
-# Create the tasks using images from dockerhub
-# Create a kubernetes pod using a python image
-python_task = KubernetesPodOperator(namespace='airflow-bigdata',
-                                    image="python:3.6",
-                                    cmds=["python","-c"],
-                                    arguments=["print('[PYTHON TASK] Hello world!')"],
-                                    labels={"foo": "bar"},
-                                    name="python-k8s-task",
-                                    task_id="python-task",
-                                    get_logs=True,
-                                    dag=dag
-)
-
-# Create a kubernetes pod using an ubuntu image
-bash_task = KubernetesPodOperator(namespace='airflow-bigdata',
-                                  image="ubuntu:16.04",
-                                  cmds=["echo"],
-                                  arguments=["[BASH TASK] Hi world!"],
-                                  labels={"foo": "bar"},
-                                  name="bash-k8s-task",
-                                  task_id="bash-task",
-                                  get_logs=True,dag=dag
-)
-
-# Create a kubernetes pod using a nodejs image
-node_task = KubernetesPodOperator(namespace='airflow-bigdata',
-                                  image="owncloudci/nodejs",
-                                  cmds=["node", "-e"],
-                                  arguments=["console.log('[NODEJS TASK] Hey world!')"],
-                                  labels={"foo": "bar"},
-                                  name="nodejs-k8s-task",
-                                  task_id="nodejs-task",
-                                  get_logs=True,
-                                  dag=dag
-)
+dag = DAG(
+    'kubernetes_hello_world', default_args=default_args, schedule_interval=timedelta(minutes=10))
 
 
-# Define the order of the tasks in the DAG
-python_task.set_upstream(first_task)
-bash_task.set_upstream(first_task)
-node_task.set_upstream(first_task)
+start = DummyOperator(task_id='start', dag=dag)
+
+passing = KubernetesPodOperator(namespace='airflow-bigdata',
+                          image="python:3.6",
+                          cmds=["python","-c"],
+                          arguments=["print('hello world')"],
+                          labels={"foo": "bar"},
+                          name="passing-test",
+                          task_id="passing-task",
+                          get_logs=True,
+                          dag=dag
+                          )
+
+failing = KubernetesPodOperator(namespace='airflow-bigdata',
+                          image="ubuntu:16.04",
+                          cmds=["python","-c"],
+                          arguments=["print('hello world')"],
+                          labels={"foo": "bar"},
+                          name="fail",
+                          task_id="failing-task",
+                          get_logs=True,
+                          dag=dag
+                          )
+
+end = DummyOperator(task_id='end', dag=dag)
+
+
+passing.set_upstream(start)
+failing.set_upstream(start)
+passing.set_downstream(end)
+failing.set_downstream(end)
