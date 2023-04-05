@@ -1,51 +1,44 @@
 from airflow import DAG
-from datetime import datetime, timedelta
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
-from airflow.operators.dummy_operator import DummyOperator
+from datetime import datetime, timedelta
 
+DAG_NAME = 'my_kubernetes_dag'
 default_args = {
-    'owner': 'airflow',
+    'owner': 'me',
     'depends_on_past': False,
-    'start_date': datetime.utcnow(),
-    'email': ['airflow@example.com'],
+    'start_date': datetime(2023, 4, 5),
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 1,
-    'retry_delay': timedelta(minutes=5)
+    'retry_delay': timedelta(minutes=5),
+}
+
+pod_arguments = {
+    'image': 'python:3.8',
+    'cmds': ['python', '-c', 'print("Hello, world!")'],
+    'name': 'my-pod'
 }
 
 dag = DAG(
-    'kubernetes_hello_world', default_args=default_args, schedule_interval=timedelta(minutes=10))
+    DAG_NAME,
+    default_args=default_args,
+    schedule_interval=timedelta(days=1)
+)
 
+task = KubernetesPodOperator(
+    dag=dag,
+    task_id='my_kubernetes_task',
+    name='my-kubernetes-task',
+    namespace='airflow-bigdata',
+    image=pod_arguments['image'],
+    cmds=pod_arguments['cmds'],
+    arguments=pod_arguments['arguments'],
+    labels={'mylabel': 'myvalue'},
+    volumes=[],
+    volume_mounts=[],
+    env_vars={},
+    is_delete_operator_pod=True,
+    hostnetwork=False
+)
 
-start = DummyOperator(task_id='start', dag=dag)
-
-passing = KubernetesPodOperator(namespace='airflow-bigdata',
-                          image="python:3.6",
-                          cmds=["python","-c"],
-                          arguments=["print('hello world')"],
-                          labels={"foo": "bar"},
-                          name="passing-test",
-                          task_id="passing-task",
-                          get_logs=True,
-                          dag=dag
-                          )
-
-failing = KubernetesPodOperator(namespace='airflow-bigdata',
-                          image="ubuntu:16.04",
-                          cmds=["python","-c"],
-                          arguments=["print('hello world')"],
-                          labels={"foo": "bar"},
-                          name="fail",
-                          task_id="failing-task",
-                          get_logs=True,
-                          dag=dag
-                          )
-
-end = DummyOperator(task_id='end', dag=dag)
-
-
-passing.set_upstream(start)
-failing.set_upstream(start)
-passing.set_downstream(end)
-failing.set_downstream(end)
+task
