@@ -32,7 +32,6 @@ task = KubernetesPodOperator(
     namespace='airflow-bigdata',
     image=pod_arguments['image'],
     cmds=pod_arguments['cmds'],
-    arguments=pod_arguments['arguments'],
     labels={'mylabel': 'myvalue'},
     volumes=[],
     volume_mounts=[],
