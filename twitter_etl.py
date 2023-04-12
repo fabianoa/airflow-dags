@@ -15,8 +15,8 @@ def get_twitter_data():
     FIELDS = {"created_at", "lang", "attachments", "public_metrics", "text", "author_id"}
 
     url = f"{BASE_URL}?query=from:{USERNAME}&tweet.fields={','.join(FIELDS)}&expansions=author_id&max_results=50"
-    time.sleep(0.01)
     response = requests.get(url=url, headers={"Authorization": f"Bearer {TWITTER_BEARER_TOKEN}"})
+    time.sleep(5)
     response_content = response.json()
 
     data = response_content["data"]
