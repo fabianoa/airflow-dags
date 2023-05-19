@@ -16,7 +16,8 @@ default_args = {
 pod_arguments = {
     'image': 'python:3.8',
     'cmds': ['python', '-c', 'print("Hello, world!")'],
-    'name': 'my-pod'
+    'name': 'my-pod',
+    'namespace': 'airflow-datalake'
 }
 
 dag = DAG(
@@ -29,7 +30,7 @@ task = KubernetesPodOperator(
     dag=dag,
     task_id='my_kubernetes_task',
     name='my-kubernetes-task',
-    namespace='airflow-bigdata',
+    namespace=pod_arguments['namespace'],
     image=pod_arguments['image'],
     cmds=pod_arguments['cmds'],
     labels={'mylabel': 'myvalue'},
