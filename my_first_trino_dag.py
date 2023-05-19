@@ -39,7 +39,7 @@ with DAG(
     task3 = TrinoOperator(
       task_id='task_3',
       trino_conn_id='trino_connection',
-      sql="select ")
+      sql="show catalogs")
 
     ## Task 4 demonstrates how you can run multiple statements in a single session.  
     ## Best practice is to run a single statement per task however statements that change session 
