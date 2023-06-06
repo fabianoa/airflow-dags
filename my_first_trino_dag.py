@@ -41,15 +41,6 @@ with DAG(
       trino_conn_id='trino_connection',
       sql="show catalogs")
 
-    ## Task 4 demonstrates how you can run multiple statements in a single session.  
-    ## Best practice is to run a single statement per task however statements that change session 
-    ## settings must be run in a single task.  The set time zone statements in this example will 
-    ## not affect any future tasks but the two now() functions would timestamps for the time zone 
-    ## set before they were run.
-    task4 = TrinoOperator(
-      task_id='task_4',
-      trino_conn_id='trino_connection',
-      sql="set time zone 'America/Chicago'; select now(); set time zone 'UTC' ; select now()")
 
     ## The following syntax determines the dependencies between all the DAG tasks.
     ## Task 1 will have to complete successfully before any other tasks run.
