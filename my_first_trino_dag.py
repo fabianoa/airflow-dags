@@ -55,4 +55,4 @@ with DAG(
     ## Task 1 will have to complete successfully before any other tasks run.
     ## Tasks 3 and 4 won't run until Task 2 completes.
     ## Tasks 3 and 4 can run in parallel if there are enough worker threads. 
-    task1 >> task2 >> [task3, task4]
+    task1 >> task2 >> task3
