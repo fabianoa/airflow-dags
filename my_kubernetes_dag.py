@@ -8,7 +8,7 @@ DAG_NAME = 'my_kubernetes_dag'
 default_args = {
     'owner': 'me',
     'depends_on_past': False,
-    'start_date': datetime(2023, 4, 5),
+    'start_date': datetime(2024, 3, 25),
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 1,
