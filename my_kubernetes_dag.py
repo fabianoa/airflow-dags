@@ -19,7 +19,7 @@ pod_arguments = {
     'image': 'python:3.8',
     'cmds': ['python', '-c', 'print("Hello, world!")'],
     'name': 'my-pod',
-    'namespace': 'airflow-datalake'
+    'namespace': 'kubedata-airflow'
 }
 
 dag = DAG(
