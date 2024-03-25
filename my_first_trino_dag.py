@@ -26,7 +26,7 @@ with DAG(
     task1 = TrinoOperator(
       task_id='task_1',
       trino_conn_id='trino_connection',
-      sql="select count(1) from tpch.tiny.customer")
+      sql="SELECT count(*) FROM sf1.customer")
 
     ## Task 2 is a Python Operator that runs the print_command method above 
     task2 = PythonOperator(
