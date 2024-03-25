@@ -2,6 +2,8 @@ from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 from datetime import datetime, timedelta
 
+# Comment teste
+
 DAG_NAME = 'my_kubernetes_dag'
 default_args = {
     'owner': 'me',
