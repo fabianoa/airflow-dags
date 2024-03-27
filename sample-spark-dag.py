@@ -32,7 +32,7 @@ t1 = SparkKubernetesOperator(
     application_file="/sample.yaml",
     kubernetes_conn_id="k8s",
     do_xcom_push=True,
-    namespace="kubedata-airflow",
+    namespace="spark-jobs",
     dag=dag,
 )
 
