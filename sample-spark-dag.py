@@ -33,8 +33,6 @@ t1 = SparkKubernetesOperator(
     kubernetes_conn_id="k8s",
     do_xcom_push=True,
     namespace="spark-jobs",
-    api_group="sparkoperator.k8s.io",
-    api_version="v1beta2",
     dag=dag,
 )
 
