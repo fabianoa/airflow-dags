@@ -29,7 +29,7 @@ dag = DAG(
 
 t1 = SparkKubernetesOperator(
     task_id='spark_pi_submit',
-    application_file="sample.yaml",
+    application_file="/sample.yaml",
     kubernetes_conn_id="k8s",
     do_xcom_push=True,
     namespace="spark-jobs",
